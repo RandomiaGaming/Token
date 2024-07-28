@@ -32,14 +32,8 @@ Error::Error(LPSTR message, ErrorDisposal disposal) {
 	_message = const_cast<void*>(reinterpret_cast<const void*>(message));
 }
 void Error::PrintAndFree() {
-	if (_wideMessage) {
-		LPCWSTR wideMessage = reinterpret_cast<LPCWSTR>(_message);
-		PrintError(wideMessage);
-	}
-	else {
-		LPCSTR narrowMessage = reinterpret_cast<LPCSTR>(_message);
-		PrintError(narrowMessage);
-	}
+	PrintInColor(L"ERROR: ", ConsoleColor::Red);
+	PrintInColor(_message, ConsoleColor::Red);
 	if (!_constMessage) {
 		switch (_disposal) {
 		case ErrorDisposal::Free:
@@ -63,107 +57,42 @@ Error::~Error() {
 }
 
 void PrintError(LPCWSTR errorMessage) {
-	// Get initial console attributes.
-	CONSOLE_SCREEN_BUFFER_INFO consoleInfo;
-	GetConsoleScreenBufferInfo(ErrorHandle, &consoleInfo);
-	WORD savedAttributes = consoleInfo.wAttributes;
-
-	// Set console attributes to red text.
-	SetConsoleTextAttribute(ErrorHandle, FOREGROUND_RED | FOREGROUND_INTENSITY);
-
-	// Print error header.
-	DWORD written;
-	LPCWSTR errorHeader = L"ERROR: ";
-	WriteConsole(ErrorHandle, errorHeader, lstrlen(errorHeader), &written, NULL);
-
-	// Print error message.
-	WriteConsole(ErrorHandle, errorMessage, lstrlen(errorMessage), &written, NULL);
-
-	// Restore initial console attributes.
-	SetConsoleTextAttribute(ErrorHandle, savedAttributes);
+	PrintInternal(ErrorHandle, L"ERROR: ", 7, ConsoleColor::Red);
+	PrintInternal(ErrorHandle, errorMessage, lstrlen(errorMessage), ConsoleColor::Red);
 }
 void PrintError(LPCSTR errorMessage) {
-	// Get initial console attributes.
-	CONSOLE_SCREEN_BUFFER_INFO consoleInfo;
-	GetConsoleScreenBufferInfo(ErrorHandle, &consoleInfo);
-	WORD savedAttributes = consoleInfo.wAttributes;
-
-	// Set console attributes to red text.
-	SetConsoleTextAttribute(ErrorHandle, FOREGROUND_RED | FOREGROUND_INTENSITY);
-
-	// Print error header.
-	DWORD written;
-	LPCWSTR errorHeader = L"ERROR: ";
-	WriteConsole(ErrorHandle, errorHeader, lstrlen(errorHeader), &written, NULL);
-
-	// Print error message.
-	WriteConsole(ErrorHandle, errorMessage, strlen(errorMessage), &written, NULL);
-
-	// Restore initial console attributes.
-	SetConsoleTextAttribute(ErrorHandle, savedAttributes);
+	PrintInternal(ErrorHandle, "ERROR: ", 7, ConsoleColor::Red);
+	PrintInternal(ErrorHandle, errorMessage, strlen(errorMessage), ConsoleColor::Red);
 }
 void PrintWarning(LPCWSTR warningMessage) {
-	// Get initial console attributes.
-	CONSOLE_SCREEN_BUFFER_INFO consoleInfo;
-	GetConsoleScreenBufferInfo(ErrorHandle, &consoleInfo);
-	WORD savedAttributes = consoleInfo.wAttributes;
-
-	// Set console attributes to yellow text.
-	SetConsoleTextAttribute(ErrorHandle, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
-
-	// Print warning header.
-	DWORD written;
-	LPCWSTR errorHeader = L"Warning: ";
-	WriteConsole(ErrorHandle, errorHeader, lstrlen(errorHeader), &written, NULL);
-
-	// Print warning message.
-	WriteConsole(ErrorHandle, warningMessage, lstrlen(warningMessage), &written, NULL);
-
-	// Restore initial console attributes.
-	SetConsoleTextAttribute(ErrorHandle, savedAttributes);
+	PrintInternal(OutputHandle, L"Warning: ", 9, ConsoleColor::Yellow);
+	PrintInternal(OutputHandle, warningMessage, lstrlen(warningMessage), ConsoleColor::Yellow);
 }
 void PrintWarning(LPCSTR warningMessage) {
-	// Get initial console attributes.
+	PrintInternal(OutputHandle, "Warning: ", 9, ConsoleColor::Yellow);
+	PrintInternal(OutputHandle, warningMessage, strlen(warningMessage), ConsoleColor::Yellow);
+}
+void PrintInColor(LPCWSTR message, ConsoleColor color) {
+	PrintInternal(OutputHandle, message, lstrlen(message), color);
+}
+void PrintInColor(LPCSTR message, ConsoleColor color) {
+	PrintInternal(OutputHandle, message, strlen(message), color);
+}
+void PrintInternal(HANDLE consoleHandle, const void* message, DWORD messageLength, ConsoleColor color) {
+	// Get initial console color.
 	CONSOLE_SCREEN_BUFFER_INFO consoleInfo;
-	GetConsoleScreenBufferInfo(ErrorHandle, &consoleInfo);
-	WORD savedAttributes = consoleInfo.wAttributes;
+	GetConsoleScreenBufferInfo(consoleHandle, &consoleInfo);
+	WORD originalColor = consoleInfo.wAttributes;
 
-	// Set console attributes to yellow text.
-	SetConsoleTextAttribute(ErrorHandle, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
-
-	// Print warning header.
-	DWORD written;
-	LPCWSTR errorHeader = L"Warning: ";
-	WriteConsole(ErrorHandle, errorHeader, lstrlen(errorHeader), &written, NULL);
+	// Set console color.
+	SetConsoleTextAttribute(consoleHandle, color);
 
 	// Print warning message.
-	WriteConsole(ErrorHandle, warningMessage, strlen(warningMessage), &written, NULL);
+	DWORD charsWritten;
+	WriteConsole(consoleHandle, message, messageLength, &charsWritten, NULL);
 
 	// Restore initial console attributes.
-	SetConsoleTextAttribute(ErrorHandle, savedAttributes);
-}
-void Print(LPCWSTR message) {
-	// Print message.
-	DWORD written;
-	WriteConsole(ErrorHandle, message, lstrlen(message), &written, NULL);
-}
-void Print(LPCSTR message) {
-	// Print message.
-	DWORD written;
-	WriteConsole(ErrorHandle, message, strlen(message), &written, NULL);
-}
-void PrintLine(LPCWSTR message) {
-	Print(message);
-	PrintLine();
-}
-void PrintLine(LPCSTR message) {
-	Print(message);
-	PrintLine();
-}
-void PrintLine() {
-	// Print new line.
-	DWORD written;
-	WriteConsole(ErrorHandle, L"\r\n", 2, &written, NULL);
+	SetConsoleTextAttribute(consoleHandle, originalColor);
 }
 
 void PressAnyKey() {
