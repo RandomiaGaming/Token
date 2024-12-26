@@ -22,7 +22,7 @@
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{cf29b49b-8734-4b7c-abd8-cdbc6ebd647e}</ProjectGuid>
-    <RootNamespace>Token</RootNamespace>
+    <RootNamespace>token</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -76,6 +76,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <ExceptionHandling>Async</ExceptionHandling>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -90,6 +92,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <ExceptionHandling>Async</ExceptionHandling>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -104,6 +108,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <ExceptionHandling>Async</ExceptionHandling>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -118,6 +124,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <ExceptionHandling>Async</ExceptionHandling>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -127,13 +135,28 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Helper.cpp" />
+    <ClCompile Include="EzCpp\EzAudio.cpp" />
+    <ClCompile Include="EzCpp\EzConsole.cpp" />
+    <ClCompile Include="EzCpp\EzCore.cpp" />
+    <ClCompile Include="EzCpp\EzFiles.cpp" />
+    <ClCompile Include="EzCpp\EzHelper.cpp" />
+    <ClCompile Include="EzCpp\EZRenderer.cpp" />
+    <ClCompile Include="EzCpp\EzTokens.cpp" />
+    <ClCompile Include="EzCpp\EzTokenTools.cpp" />
+    <ClCompile Include="EzCpp\EzWindow.cpp" />
     <ClCompile Include="program.cpp" />
-    <ClCompile Include="TokenInfo.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Helper.h" />
-    <ClInclude Include="TokenInfo.h" />
+    <ClInclude Include="EzCpp\EzAudio.h" />
+    <ClInclude Include="EzCpp\EzConsole.h" />
+    <ClInclude Include="EzCpp\EzCore.h" />
+    <ClInclude Include="EzCpp\EzFiles.h" />
+    <ClInclude Include="EzCpp\EzHelper.h" />
+    <ClInclude Include="EzCpp\EzLL.h" />
+    <ClInclude Include="EzCpp\EzRenderer.h" />
+    <ClInclude Include="EzCpp\EzTokens.h" />
+    <ClInclude Include="EzCpp\EzTokenTools.h" />
+    <ClInclude Include="EzCpp\EzWindow.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
